@@ -76,6 +76,7 @@ contract('Shopfront', function(accounts) {
         return shopfront.products(pID);
       })
       .then(function(product){
+        console.log("Product0 Price:"+product[0]+", Stock:"+product[1]);
         assert.strictEqual(product[0].toString(), product0.price.toString());
         assert.strictEqual(product[1].toString(), product0.stock.toString());
       })
@@ -100,6 +101,7 @@ contract('Shopfront', function(accounts) {
         return shopfront.products(pID);
       })
       .then(function(product){
+        console.log("Product1 Price:"+product[0]+", Stock:"+product[1]);
         assert.strictEqual(product[0].toString(), product1.price.toString());
         assert.strictEqual(product[1].toString(), product1.stock.toString());
       })
@@ -119,13 +121,14 @@ contract('Shopfront', function(accounts) {
         return productBoughtEvent.watchPromise();
       })
       .then(function(result){
+        console.log("Buyer:"+result.args.buyer+", Product:"+result.args.productID+", Price:"+result.args.price);
         assert.strictEqual(result.args.buyer.toString(), accounts[1].toString());
         assert.strictEqual(result.args.productID.toString(), '0');
         assert.strictEqual(result.args.price.toString(), product0.price.toString());
       });
     });
     
-    it("should let owner make payments or withdraw value from the contract.", function(){
+    it("should let owner or withdraw value from the contract.", function(){
       var ownerBalanceBefore;
       var withdrawAmount;
       var ownerBalanceAfter;
@@ -133,6 +136,7 @@ contract('Shopfront', function(accounts) {
       return web3.eth.getBalancePromise(owner)
       .then(result=>{
         ownerBalanceBefore = result;
+        console.log("ownerBalanceBefore:" + ownerBalanceBefore);
         withdrawAmount = 100000000000000000;
         return shopfront.withdraw.call(withdrawAmount, {owner});
       })
@@ -148,9 +152,12 @@ contract('Shopfront', function(accounts) {
       })
       .then(result=>{
         ownerBalanceAfter = result;
+        console.log("ownerBalanceAfter:" + ownerBalanceAfter);
         assert.strictEqual(ownerBalanceBefore.plus(100000000000000000).toString(), ownerBalanceAfter.toString());
       });
     });
+
+    //it("should let owner make payments from the contract.", function(){});
     
   }); //describe Shopfront Basic
 }); //contract
