@@ -1,52 +1,56 @@
 pragma solidity ^0.4.2;
 
-contract Shopfront {
-
+contract Owned {
 	address owner;
+
+	function Owned(){
+		owner = msg.sender;
+	}
+}
+
+contract Shopfront is Owned {
 
 	struct Product{
 		uint price;
 		uint stock;
 	}
 
-	struct ProductTx{
-		address buyer;
-		uint productID;
-		uint timestamp;
-	}
-
 	uint public numProducts;
-	uint public numTxs;
+	uint public productID;
 	mapping (uint=>Product) public products;
-	ProductTx[] public productTxs;
+
+	event OnProductCreated(uint indexed productID, uint price, uint stock);
+	event OnProductBought(address indexed buyer, uint productID, uint price);
 
 	function Shopfront(){
-		owner = msg.sender;
+		numProducts = 0;
 	}
 
-	function newProduct(uint _price, uint _stock) returns (uint productID) {
-		if(msg.sender == owner){
-			productID = numProducts++;
-			products[productID] = Product(_price, _stock);
-			return productID;
-		}
+	modifier onlyMe () {
+        if (msg.sender != owner) throw;
+        _;
+    }
+
+	function newProduct(uint _price, uint _stock) onlyMe() returns (bool) {
+		productID = numProducts;
+		products[productID] = Product(_price, _stock);
+		OnProductCreated(productID, _price, _stock);
+		numProducts++;
+		return true;
 	}
 
-	function buy(uint productID) payable returns (uint txID) {
+	function buy(uint productID) payable returns (bool){
 		if(products[productID].stock > 0 && msg.value >= products[productID].price){
-			txID = productTxs.push(ProductTx(msg.sender, productID, now));
 			products[productID].stock--;
-			return txID;
+			OnProductBought(msg.sender, productID, msg.value);
+			return true;
 		}
 	}
 
 	function withdraw(uint value) returns (bool){
-		if(msg.sender == owner){
-			if(!owner.send(value)){
-				throw;
-			}
-			return true;
-		}
+		if(msg.sender != owner) throw;
+		if(!owner.send(value)) throw;
+		return true;
 	}
 
 	function kill() returns (bool) {
