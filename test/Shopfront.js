@@ -28,9 +28,9 @@ contract('Shopfront', function(accounts) {
         });
 
         var products = [
-          {price: 900000000000000000, stock: 10},
-          {price: 800000000000000000, stock: 8},
-          {price: 700000000000000000, stock: 762},
+          {price: web3.toBigNumber("900000000000000000"), stock: 10},
+          {price: web3.toBigNumber("800000000000000000"), stock: 8},
+          {price: web3.toBigNumber("700000000000000000"), stock: 762},
         ];
 
         return products.forEach(function(product){
@@ -64,7 +64,7 @@ contract('Shopfront', function(accounts) {
     
     describe('buy products', function(){
 
-        var product = {price: 900000000000000000, stock: 10};
+        var product = {price: web3.toBigNumber("900000000000000000"), stock: 10};
 
         beforeEach("should create a shopfront with products", function(){
           return Shopfront.new({from:owner})
@@ -104,7 +104,7 @@ contract('Shopfront', function(accounts) {
 
     describe('owner can make payments from the contract', function(){
 
-        var product = {price: 900000000000000000, stock: 10};
+        var product = {price: web3.toBigNumber("900000000000000000"), stock: 10};
         var contractBalanceBefore, payeeBalanceBefore;
 
         beforeEach("should create a shopfront with balance", function(){
@@ -141,10 +141,10 @@ contract('Shopfront', function(accounts) {
           
           var contractBalanceAfter, payeeBalanceAfter;
 
-          return shopfront.pay.call(accounts[2], 100000000000000000, {owner})
+          return shopfront.pay.call(accounts[2], web3.toBigNumber("100000000000000000"), {owner})
           .then(success=>{
             assert.isTrue(success);
-            return shopfront.pay(accounts[2], 100000000000000000, {owner});
+            return shopfront.pay(accounts[2], web3.toBigNumber("100000000000000000"), {owner});
           })
           .then(txHash=>{
             return web3.eth.getTransactionReceiptMined(txHash);
@@ -158,8 +158,8 @@ contract('Shopfront', function(accounts) {
           })
           .then(result=>{
             payeeBalanceAfter = result;
-            assert.strictEqual(contractBalanceBefore.minus(100000000000000000).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
-            assert.strictEqual(payeeBalanceBefore.plus(100000000000000000).toString(), payeeBalanceAfter.toString(), "payee's balance should gain 0.1 ether");
+            assert.strictEqual(contractBalanceBefore.minus(web3.toBigNumber("100000000000000000")).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
+            assert.strictEqual(payeeBalanceBefore.plus(web3.toBigNumber("100000000000000000")).toString(), payeeBalanceAfter.toString(), "payee's balance should gain 0.1 ether");
           });
         });
 
@@ -194,7 +194,7 @@ contract('Shopfront', function(accounts) {
     
     describe('owner can withdraw value from the contract', function(){
 
-        var product = {price: 900000000000000000, stock: 10};
+        var product = {price: web3.toBigNumber("900000000000000000"), stock: 10};
         var contractBalanceBefore, ownerBalanceBefore;
 
         beforeEach("should create a shopfront with balance", function(){
@@ -256,10 +256,10 @@ contract('Shopfront', function(accounts) {
         it("should let owner withdraw some value from the contract.", function(){
           var contractBalanceAfter, ownerBalanceAfter;
           
-          return shopfront.withdraw.call(100000000000000000, {owner})
+          return shopfront.withdraw.call(web3.toBigNumber("100000000000000000"), {owner})
           .then(success=>{
             assert.isTrue(success);
-            return shopfront.withdraw(100000000000000000, {owner});
+            return shopfront.withdraw(web3.toBigNumber("100000000000000000"), {owner});
           })
           .then(txHash=>{
             return web3.eth.getTransactionReceiptMined(txHash);
@@ -273,8 +273,8 @@ contract('Shopfront', function(accounts) {
           })
           .then(result=>{
             ownerBalanceAfter = result;
-            assert.strictEqual(contractBalanceBefore.minus(100000000000000000).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
-            assert.strictEqual(ownerBalanceBefore.plus(100000000000000000).toString(), ownerBalanceAfter.toString(), "owner's balance should gain 0.1 ether");
+            assert.strictEqual(contractBalanceBefore.minus(web3.toBigNumber("100000000000000000")).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
+            assert.strictEqual(ownerBalanceBefore.plus(web3.toBigNumber("100000000000000000")).toString(), ownerBalanceAfter.toString(), "owner's balance should gain 0.1 ether");
           });
         });
 
