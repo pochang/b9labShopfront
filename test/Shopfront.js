@@ -1,10 +1,10 @@
-const PromisifyWeb3 = require("../utils/promisifyWeb3.js");
-PromisifyWeb3.promisify(web3);
-
-require('../utils/getTransactionReceiptMined');
+const Extensions = require("../utils/extensions.js");
+Extensions.init(web3, assert);
 
 contract('Shopfront', function(accounts) {
+  
   describe("Shopfront Basic", function(){
+
     var shopfront;
     var owner = accounts[0];
     var product0 = {
@@ -15,149 +15,273 @@ contract('Shopfront', function(accounts) {
         price: 700000000000000000,
         stock: 8
     };
-    var productCreatedEvent;
-    var productBoughtEvent;
+    
 
-    before("New Shopfront instance", function(){
-      return Shopfront.new({from:owner})
-      .then(function(created){
-         shopfront = created;
-         return web3.eth.getTransactionReceiptMined(shopfront.transactionHash);
-      })
-      .then(receipt=>{
-        
-        assert.strictEqual(receipt.transactionHash, shopfront.transactionHash);
-        
-        //Promisify event.watch()
-        productCreatedEvent = shopfront.OnProductCreated();
-        productCreatedEvent.watchPromise = function () {
-            return new Promise(function (resolve, reject) {
-                productCreatedEvent.watch(function(e, result) {
-                    if (e != null) {
-                        reject(e);
-                    } else {
-                        resolve(result);
-                    }
+    describe('add products', function() {
+
+        before("should create a shopfront", function(){
+          return Shopfront.new({from:owner})
+          .then(function(created){
+             shopfront = created;
+             return web3.eth.getTransactionReceiptMined(shopfront.transactionHash);
+          });
+        });
+
+        var products = [
+          {price: 900000000000000000, stock: 10},
+          {price: 800000000000000000, stock: 8},
+          {price: 700000000000000000, stock: 762},
+        ];
+
+        return products.forEach(function(product){
+
+            it("should add products("+products.indexOf(product)+"), which consist of an id, a price and a stock as an owner", function() {
+
+                return shopfront.newProduct.call(product.price, product.stock, {from:owner})
+                .then(function(success){
+                    assert.isTrue(success, "should be possible for owner to add a product");
+                    return shopfront.newProduct(product.price, product.stock, {from:owner});
+                })
+                .then(function(txHash){
+                    return web3.eth.getTransactionReceiptMined(txHash);
+                })
+                .then(function(receipt){
+                  return Extensions.getEventsPromise(shopfront.OnProductCreated({},{fromBlock: receipt.blockNumber}));
+                })
+                .then(function(events){
+                  pID = events[0].args.productID;
+                  assert.strictEqual(pID.toString(), products.indexOf(product).toString(), "pID should be "+products.indexOf(product));
+                  return shopfront.products(pID);
+                })
+                .then(function(result){
+                  //console.log("Product"+products.indexOf(product)+" Price:"+result[0]+", Stock:"+result[1]);
+                  assert.strictEqual(result[0].toString(), product.price.toString());
+                  assert.strictEqual(result[1].toString(), product.stock.toString());
                 });
             });
-        };
-
-        productBoughtEvent = shopfront.OnProductBought();
-        productBoughtEvent.watchPromise = function () {
-            return new Promise(function (resolve, reject) {
-                productBoughtEvent.watch(function(e, result) {
-                    if (e != null) {
-                        reject(e);
-                    } else {
-                        resolve(result);
-                    }
-                });
-            });
-        };
-      });
-    });
-
-    it("should add products, which consist of an id, a price and a stock as an administrator", function() {
-
-      return shopfront.newProduct.call(product0.price, product0.stock, {from:owner})
-      .then(function(success){
-          assert.isTrue(success);
-          return shopfront.newProduct(product0.price, product0.stock, {from:owner});
-      })
-      .then(function(txHash){
-          return web3.eth.getTransactionReceiptMined(txHash);
-      })
-      .then(function(receipt){
-        return productCreatedEvent.watchPromise();
-      })
-      .then(function(result){
-        pID = parseInt(result.args.productID);
-        assert.strictEqual(pID, 0);
-        return shopfront.products(pID);
-      })
-      .then(function(product){
-        console.log("Product0 Price:"+product[0]+", Stock:"+product[1]);
-        assert.strictEqual(product[0].toString(), product0.price.toString());
-        assert.strictEqual(product[1].toString(), product0.stock.toString());
-      })
+        });
     });
     
-    it("should add products, which consist of an id, a price and a stock as an administrator", function() {
+    describe('buy products', function(){
 
-      return shopfront.newProduct.call(product1.price, product1.stock, {from:owner})
-      .then(function(success){
-          assert.isTrue(success);
-          return shopfront.newProduct(product1.price, product1.stock, {from:owner});
-      })
-      .then(function(txHash){
-          return web3.eth.getTransactionReceiptMined(txHash);
-      })
-      .then(function(receipt){
-        return productCreatedEvent.watchPromise()
-      })
-      .then(function(result){
-        pID = parseInt(result.args.productID);
-        assert.strictEqual(pID, 1);
-        return shopfront.products(pID);
-      })
-      .then(function(product){
-        console.log("Product1 Price:"+product[0]+", Stock:"+product[1]);
-        assert.strictEqual(product[0].toString(), product1.price.toString());
-        assert.strictEqual(product[1].toString(), product1.stock.toString());
-      })
-    });
-    
-    it("should let a regular user buy 1 of the products", function(){
-      
-      return shopfront.buy.call(0, {from:accounts[1], value:product0.price})
-      .then(function(success){
-          assert.isTrue(success);
-          return shopfront.buy(0, {from:accounts[1], value:product0.price});
-      })
-      .then(function(txHash){
-          return web3.eth.getTransactionReceiptMined(txHash);
-      })
-      .then(function(receipt){
-        return productBoughtEvent.watchPromise();
-      })
-      .then(function(result){
-        console.log("Buyer:"+result.args.buyer+", Product:"+result.args.productID+", Price:"+result.args.price);
-        assert.strictEqual(result.args.buyer.toString(), accounts[1].toString());
-        assert.strictEqual(result.args.productID.toString(), '0');
-        assert.strictEqual(result.args.price.toString(), product0.price.toString());
-      });
-    });
-    
-    it("should let owner or withdraw value from the contract.", function(){
-      var ownerBalanceBefore;
-      var withdrawAmount;
-      var ownerBalanceAfter;
+        var product = {price: 900000000000000000, stock: 10};
 
-      return web3.eth.getBalancePromise(owner)
-      .then(result=>{
-        ownerBalanceBefore = result;
-        console.log("ownerBalanceBefore:" + ownerBalanceBefore);
-        withdrawAmount = 100000000000000000;
-        return shopfront.withdraw.call(withdrawAmount, {owner});
-      })
-      .then(success=>{
-        assert.isTrue(success);
-        return shopfront.withdraw(withdrawAmount, {owner});
-      })
-      .then(txHash=>{
-        return web3.eth.getTransactionReceiptMined(txHash);
-      })
-      .then(receipt=>{
-        return web3.eth.getBalancePromise(owner);
-      })
-      .then(result=>{
-        ownerBalanceAfter = result;
-        console.log("ownerBalanceAfter:" + ownerBalanceAfter);
-        assert.strictEqual(ownerBalanceBefore.plus(100000000000000000).toString(), ownerBalanceAfter.toString());
-      });
+        beforeEach("should create a shopfront with products", function(){
+          return Shopfront.new({from:owner})
+          .then(function(created){
+             shopfront = created;
+             return web3.eth.getTransactionReceiptMined(shopfront.transactionHash);
+          })
+          .then(function(receipt){
+              return shopfront.newProduct(product.price, product.stock, {from:owner});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          });
+        });
+
+        it("should let a regular user buy 1 of the products", function(){
+          return shopfront.buy.call(0, {from:accounts[1], value:product.price})
+          .then(function(success){
+              assert.isTrue(success);
+              return shopfront.buy(0, {from:accounts[1], value:product.price});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(function(receipt){
+              return Extensions.getEventsPromise(shopfront.OnProductBought({},{fromBlock: receipt.blockNumber}));
+          })
+          .then(function(events){
+            //console.log("Buyer:"+events[0].args.buyer+", Product:"+events[0].args.productID+", Price:"+events[0].args.price);
+            assert.strictEqual(events[0].args.buyer.toString(), accounts[1].toString());
+            assert.strictEqual(events[0].args.productID.toString(), '0');
+            assert.strictEqual(events[0].args.price.toString(), product.price.toString());
+          });
+        });
+
     });
 
-    //it("should let owner make payments from the contract.", function(){});
+    describe('owner can make payments from the contract', function(){
+
+        var product = {price: 900000000000000000, stock: 10};
+        var contractBalanceBefore, payeeBalanceBefore;
+
+        beforeEach("should create a shopfront with balance", function(){
+          return Shopfront.new({from:owner})
+          .then(function(created){
+             shopfront = created;
+             return web3.eth.getTransactionReceiptMined(shopfront.transactionHash);
+          })
+          .then(function(receipt){
+              return shopfront.newProduct(product.price, product.stock, {from:owner});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(function(receipt){
+            return shopfront.buy(0, {from:accounts[1], value:product.price});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(function(receipt){
+            return web3.eth.getBalancePromise(shopfront.address);
+          })
+          .then(result=>{
+            contractBalanceBefore = result;
+            return web3.eth.getBalancePromise(accounts[2]);
+          })
+          .then(result=>{
+            payeeBalanceBefore = result;
+          });
+        });
+
+        it("should let owner pay some value from the contract.", function(){
+          
+          var contractBalanceAfter, payeeBalanceAfter;
+
+          return shopfront.pay.call(accounts[2], 100000000000000000, {owner})
+          .then(success=>{
+            assert.isTrue(success);
+            return shopfront.pay(accounts[2], 100000000000000000, {owner});
+          })
+          .then(txHash=>{
+            return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(receipt=>{
+            return web3.eth.getBalancePromise(shopfront.address)
+          })
+          .then(result=>{
+            contractBalanceAfter = result;
+            return web3.eth.getBalancePromise(accounts[2]);
+          })
+          .then(result=>{
+            payeeBalanceAfter = result;
+            assert.strictEqual(contractBalanceBefore.minus(100000000000000000).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
+            assert.strictEqual(payeeBalanceBefore.plus(100000000000000000).toString(), payeeBalanceAfter.toString(), "payee's balance should gain 0.1 ether");
+          });
+        });
+
+        it("should let owner pay all value from the contract.", function(){
+          
+          var contractBalanceAfter, payeeBalanceAfter;
+          
+          return shopfront.pay.call(accounts[2], contractBalanceBefore, {owner})
+          .then(success=>{
+            assert.isTrue(success);
+            return shopfront.pay(accounts[2], contractBalanceBefore, {owner});
+          })
+          .then(txHash=>{
+            return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(receipt=>{
+            return web3.eth.getBalancePromise(shopfront.address)
+          })
+          .then(result=>{
+            contractBalanceAfter = result;
+            return web3.eth.getBalancePromise(accounts[2]);
+          })
+          .then(result=>{
+            payeeBalanceAfter = result;
+            assert.strictEqual(contractBalanceBefore.minus(contractBalanceBefore).toString(), contractBalanceAfter.toString(), "contract balance should be 0");
+            assert.strictEqual(payeeBalanceBefore.plus(contractBalanceBefore).toString(), payeeBalanceAfter.toString(), "payee's balance should gain 0.9 ether");
+          });
+        });        
+
+    });
+
     
-  }); //describe Shopfront Basic
-}); //contract
+    describe('owner can withdraw value from the contract', function(){
+
+        var product = {price: 900000000000000000, stock: 10};
+        var contractBalanceBefore, ownerBalanceBefore;
+
+        beforeEach("should create a shopfront with balance", function(){
+          return Shopfront.new({from:owner})
+          .then(function(created){
+             shopfront = created;
+             return web3.eth.getTransactionReceiptMined(shopfront.transactionHash);
+          })
+          .then(function(receipt){
+              return shopfront.newProduct(product.price, product.stock, {from:owner});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(function(receipt){
+            return shopfront.buy(0, {from:accounts[1], value:product.price});
+          })
+          .then(function(txHash){
+              return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(function(receipt){
+            return web3.eth.getBalancePromise(shopfront.address);
+          })
+          .then(result=>{
+            contractBalanceBefore = result;
+            return web3.eth.getBalancePromise(owner);
+          })
+          .then(result=>{
+            ownerBalanceBefore = result;
+          });
+        });
+
+        it("should let owner withdraw 0 from the contract.", function(){
+          var contractBalanceAfter, ownerBalanceAfter;
+          
+          return shopfront.withdraw.call(0, {owner})
+          .then(success=>{
+            assert.isTrue(success);
+            return shopfront.withdraw(0, {owner});
+          })
+          .then(txHash=>{
+            return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(receipt=>{
+            return web3.eth.getBalancePromise(shopfront.address)
+          })
+          .then(result=>{
+            contractBalanceAfter = result;
+            return web3.eth.getBalancePromise(owner);
+          })
+          .then(result=>{
+            ownerBalanceAfter = result;
+            assert.strictEqual(contractBalanceBefore.toString(), contractBalanceAfter.toString(), "contract balance should be the same");
+            assert.strictEqual(ownerBalanceBefore.toString(), ownerBalanceAfter.toString(), "owner's balance should be the same");
+          });
+        });
+
+
+        it("should let owner withdraw some value from the contract.", function(){
+          var contractBalanceAfter, ownerBalanceAfter;
+          
+          return shopfront.withdraw.call(100000000000000000, {owner})
+          .then(success=>{
+            assert.isTrue(success);
+            return shopfront.withdraw(100000000000000000, {owner});
+          })
+          .then(txHash=>{
+            return web3.eth.getTransactionReceiptMined(txHash);
+          })
+          .then(receipt=>{
+            return web3.eth.getBalancePromise(shopfront.address)
+          })
+          .then(result=>{
+            contractBalanceAfter = result;
+            return web3.eth.getBalancePromise(owner);
+          })
+          .then(result=>{
+            ownerBalanceAfter = result;
+            assert.strictEqual(contractBalanceBefore.minus(100000000000000000).toString(), contractBalanceAfter.toString(), "contract balance should loss 0.1 ether");
+            assert.strictEqual(ownerBalanceBefore.plus(100000000000000000).toString(), ownerBalanceAfter.toString(), "owner's balance should gain 0.1 ether");
+          });
+        });
+
+    });
+
+
+  });
+
+
+});

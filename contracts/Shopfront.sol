@@ -6,6 +6,11 @@ contract Owned {
 	function Owned(){
 		owner = msg.sender;
 	}
+
+	modifier onlyOwner {
+        if (msg.sender != owner) throw;
+        _;
+    }
 }
 
 contract Shopfront is Owned {
@@ -26,16 +31,11 @@ contract Shopfront is Owned {
 		numProducts = 0;
 	}
 
-	modifier onlyMe () {
-        if (msg.sender != owner) throw;
-        _;
-    }
-
-	function newProduct(uint _price, uint _stock) onlyMe() returns (bool) {
+	function newProduct(uint _price, uint _stock) onlyOwner() returns (bool) {
 		productID = numProducts;
 		products[productID] = Product(_price, _stock);
 		OnProductCreated(productID, _price, _stock);
-		numProducts++;
+		numProducts = productID + 1;
 		return true;
 	}
 
@@ -47,17 +47,19 @@ contract Shopfront is Owned {
 		}
 	}
 
-	function withdraw(uint value) returns (bool){
-		if(msg.sender != owner) throw;
+	function pay(address account, uint value) onlyOwner() returns (bool){
+		if(!account.send(value)) throw;
+		return true;
+	}
+
+	function withdraw(uint value) onlyOwner() returns (bool){
 		if(!owner.send(value)) throw;
 		return true;
 	}
 
-	function kill() returns (bool) {
-        if (msg.sender == owner) {
-            selfdestruct(owner);
-            return true;
-        }
+	function kill() onlyOwner() returns (bool) {
+        selfdestruct(owner);
+        return true;
     }
 
 }
