@@ -1,17 +1,6 @@
 pragma solidity ^0.4.2;
 
-contract Owned {
-	address owner;
-
-	function Owned(){
-		owner = msg.sender;
-	}
-
-	modifier onlyOwner {
-        if (msg.sender != owner) throw;
-        _;
-    }
-}
+import "./Owned.sol";
 
 contract Shopfront is Owned {
 
@@ -21,7 +10,6 @@ contract Shopfront is Owned {
 	}
 
 	uint public numProducts;
-	uint public productID;
 	mapping (uint=>Product) public products;
 
 	event OnProductCreated(uint indexed productID, uint price, uint stock);
@@ -32,10 +20,9 @@ contract Shopfront is Owned {
 	}
 
 	function newProduct(uint _price, uint _stock) onlyOwner() returns (bool) {
-		productID = numProducts;
-		products[productID] = Product(_price, _stock);
-		OnProductCreated(productID, _price, _stock);
-		numProducts = productID + 1;
+		products[numProducts] = Product(_price, _stock);
+		OnProductCreated(numProducts, _price, _stock);
+		numProducts++;
 		return true;
 	}
 
@@ -58,8 +45,8 @@ contract Shopfront is Owned {
 	}
 
 	function kill() onlyOwner() returns (bool) {
-        selfdestruct(owner);
-        return true;
-    }
+		selfdestruct(owner);
+		return true;
+	}
 
 }
