@@ -16,10 +16,9 @@ contract Shopfront is Owned {
 	event OnProductBought(address indexed buyer, uint productID, uint price);
 
 	function Shopfront(){
-		numProducts = 0;
 	}
 
-	function newProduct(uint _price, uint _stock) onlyOwner() returns (bool) {
+	function addProduct(uint _price, uint _stock) onlyOwner() returns (bool) {
 		products[numProducts] = Product(_price, _stock);
 		OnProductCreated(numProducts, _price, _stock);
 		numProducts++;
