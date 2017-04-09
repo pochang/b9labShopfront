@@ -5733,8 +5733,8 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     ],
     "unlinked_binary": "0x606060405234610000575b60008054600160a060020a03191633600160a060020a03161790555b5b610190806100366000396000f300606060405263ffffffff60e060020a6000350416630900f0108114610045578063445df0ac146100605780638da5cb5b1461007f578063fdacd576146100a8575b610000565b346100005761005e600160a060020a03600435166100ba565b005b346100005761006d61012d565b60408051918252519081900360200190f35b346100005761008c610133565b60408051600160a060020a039092168252519081900360200190f35b346100005761005e600435610142565b005b6000805433600160a060020a03908116911614156101275781905080600160a060020a031663fdacd5766001546040518263ffffffff1660e060020a02815260040180828152602001915050600060405180830381600087803b156100005760325a03f115610000575050505b5b5b5050565b60015481565b600054600160a060020a031681565b60005433600160a060020a039081169116141561015f5760018190555b5b5b505600a165627a7a72305820dc84f0088430907313261a7bdf607ca45fb86f1e87cf81fbf4f5e34da1ddd4de0029",
     "events": {},
-    "updated_at": 1488124932853,
-    "address": "0x76bce00c64f35f0b25ae7f92bc4b39f7c5ebcb61",
+    "updated_at": 1491713869680,
+    "address": "0xbb0df2e5a2147237f2b4ad57880f9f91abec23fb",
     "links": {}
   }
 };
@@ -6222,10 +6222,11 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x6060604052346000575b60008054600160a060020a03191633600160a060020a03161790555b5b60358060336000396000f30060606040525b60005600a165627a7a723058202f685cc364d0499bb9c9175fafd8c9854e39a53feb8fa7649c8926f0938ac3870029",
+    "unlinked_binary": "0x6060604052346000575b60008054600160a060020a03191633600160a060020a03161790555b5b60358060336000396000f30060606040525b60005600a165627a7a72305820a2db9174f10c1aade169c467d149fc21676df32a30e7efc39fd675523b27e49a0029",
     "events": {},
-    "updated_at": 1488124932863,
-    "links": {}
+    "updated_at": 1491713869676,
+    "links": {},
+    "address": "0x290894eb86151e80f47f75c4bc2bcceefa798e8b"
   }
 };
 
@@ -6771,11 +6772,11 @@ var SolidityEvent = require("web3/lib/web3/event.js");
             "type": "uint256"
           }
         ],
-        "name": "newProduct",
+        "name": "addProduct",
         "outputs": [
           {
-            "name": "productID",
-            "type": "uint256"
+            "name": "",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -6789,6 +6790,28 @@ var SolidityEvent = require("web3/lib/web3/event.js");
           {
             "name": "",
             "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "account",
+            "type": "address"
+          },
+          {
+            "name": "value",
+            "type": "uint256"
+          }
+        ],
+        "name": "pay",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
           }
         ],
         "payable": false,
@@ -6862,7 +6885,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "event"
       }
     ],
-    "unlinked_binary": "0x606060405234610000575b5b60008054600160a060020a03191633600160a060020a03161790555b60006001555b5b6103348061003d6000396000f3006060604052361561005c5763ffffffff60e060020a6000350416632e1a7d4d811461006157806341c0e1b5146100855780637acc0b20146100a6578063a748de1b146100cf578063ac964f21146100f4578063d96a094a14610113575b610000565b3461000057610071600435610132565b604080519115158252519081900360200190f35b3461000057610071610187565b604080519115158252519081900360200190f35b34610000576100b66004356101b1565b6040805192835260208301919091528051918290030190f35b34610000576100e26004356024356101ca565b60408051918252519081900360200190f35b34610000576100e2610261565b60408051918252519081900360200190f35b610071600435610267565b604080519115158252519081900360200190f35b6000805433600160a060020a03908116911614156101815760008054604051600160a060020a039091169184156108fc02918591818181858888f19350505050151561017d57610000565b5060015b5b919050565b6000805433600160a060020a03908116911614156101ad57600054600160a060020a0316ff5b5b90565b6002602052600090815260409020805460019091015482565b6000805433600160a060020a039081169116146101e657610000565b506001805460408051808201825285815260208082018681526000858152600283528490209251835551919094015580518581529283018490528051919283927f97319738700f2cedd7405e33a3f0b26e1d7c9d66bf83997ee926e3fee51839d4929181900390910190a260018054810190555b5b92915050565b60015481565b600081815260026020526040812060010154819011801561029657506000828152600260205260409020543410155b15610181576000828152600260209081526040918290206001018054600019019055815184815234918101919091528151600160a060020a033316927f86ce6fbb36b3b8d237f27962004438f712b5cf25f8767496cebdbe1508d4c728928290030190a2506001610181565b5b9190505600a165627a7a7230582087fa6b63a27e14514eb0653eefc64c09636bcdabbb1340668eeb27b9e0b049200029",
+    "unlinked_binary": "0x606060405234610000575b5b60008054600160a060020a03191633600160a060020a03161790555b5b5b6103d0806100386000396000f300606060405236156100675763ffffffff60e060020a6000350416632e1a7d4d811461006c57806341c0e1b5146100905780637acc0b20146100b15780638b692479146100da578063ac964f2114610101578063c407687614610120578063d96a094a14610150575b610000565b346100005761007c60043561016f565b604080519115158252519081900360200190f35b346100005761007c6101c8565b604080519115158252519081900360200190f35b34610000576100c16004356101f6565b6040805192835260208301919091528051918290030190f35b346100005761007c60043560243561020f565b604080519115158252519081900360200190f35b346100005761010e6102a6565b60408051918252519081900360200190f35b346100005761007c600160a060020a03600435166024356102ac565b604080519115158252519081900360200190f35b61007c600435610303565b604080519115158252519081900360200190f35b6000805433600160a060020a0390811691161461018b57610000565b60008054604051600160a060020a039091169184156108fc02918591818181858888f1935050505015156101be57610000565b5060015b5b919050565b6000805433600160a060020a039081169116146101e457610000565b600054600160a060020a0316ff5b5b90565b6002602052600090815260409020805460019091015482565b6000805433600160a060020a0390811691161461022b57610000565b6040805180820182528481526020808201858152600180546000908152600284528590209351845590519281019290925590548251868152918201859052825190927f97319738700f2cedd7405e33a3f0b26e1d7c9d66bf83997ee926e3fee51839d4928290030190a25060018054810181555b5b92915050565b60015481565b6000805433600160a060020a039081169116146102c857610000565b604051600160a060020a0384169083156108fc029084906000818181858888f1935050505015156102f857610000565b5060015b5b92915050565b600081815260026020526040812060010154819011801561033257506000828152600260205260409020543410155b156101c2576000828152600260209081526040918290206001018054600019019055815184815234918101919091528151600160a060020a033316927f86ce6fbb36b3b8d237f27962004438f712b5cf25f8767496cebdbe1508d4c728928290030190a25060016101c2565b5b9190505600a165627a7a72305820b55b158b3695faacb7e0873fd91359391557f5f53219e80d259ee7545a24c27a0029",
     "events": {
       "0x97319738700f2cedd7405e33a3f0b26e1d7c9d66bf83997ee926e3fee51839d4": {
         "anonymous": false,
@@ -6909,9 +6932,9 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "type": "event"
       }
     },
-    "updated_at": 1488124932884,
+    "updated_at": 1491713869693,
     "links": {},
-    "address": "0xfa69b950b1a22bf7154f6fbf61636c314a2bf602"
+    "address": "0x019166ed41d82b5fdcd78a1b9c730804e9802550"
   }
 };
 
@@ -44095,36 +44118,87 @@ window.addEventListener('load', function() {
 
 var accounts;
 var account;
+var customer;
 var shopfront;
 var productCreatedEvent;
+var productCreatedResults;
+var productBoughtEvent;
 
-function newProduct(){
-  var price = parseInt(document.getElementById("price").value);
-  var stock = parseInt(document.getElementById("stock").value);
+function addProduct(){
+  var price = document.getElementById("price").value;
+  var stock = document.getElementById("stock").value;
 
-  shopfront.newProduct(price,stock, {from:account})
-  .then(function(txHash){
-    return web3.eth.getTransactionReceiptMined(txHash);
-  })
+  return shopfront.addProduct(web3.toWei(price,"ether"), stock, {from:account})
+  .then(web3.eth.getTransactionReceiptMined)
   .then(function(receipt){
-    console.log("receipt: "+receipt);
-    return productCreatedEvent.watchPromise();
-  })
-  .then(function(result){
-      console.log(result);
+    console.log("receipt: ");
+    console.log(receipt);
+    event = shopfront.OnProductCreated().formatter(receipt.logs[0]);
+    console.log(event.args.productID);
+    console.log(event.args.price.toString(10));
+    console.log(event.args.stock);
+    showProductList();
   })
   .catch(function(e){
     console.log(e);
   });
 }
 
-function showProduct(){
-  var pID = parseInt(document.getElementById("pID").value);
-  shopfront.products(pID)
-  .then(function(product){
-    console.log(product);
+function showProductList(){
+  productCreatedResults = productCreatedEvent.get(function(error, logs){
+    if(!error)
+      logs.forEach(function(log, index){
+        console.log(log);
+        console.log('logs[' + index + '].pID = ' + log.args.productID);
+        console.log('logs[' + index + '].price = ' + log.args.price.toString(10));
+        console.log('logs[' + index + '].stock = ' + log.args.stock);
+        pTable = document.getElementById("pTable");
+        pTable.innerHTML = pTable.innerHTML + "<tr><td>"+log.args.productID+"</td><td>"+web3.fromWei(log.args.price.toString(10), "ether")+"</td><td>"+log.args.stock+"</td><td id=\"stockleft"+log.args.productID+"\"></td><td><button id=\"buyProduct\" onclick=\"buyProduct("+log.args.productID+","+log.args.price+")\">Buy</button></td></tr>";
+        getProductStock(log.args.productID);
+      });
   });
 }
+
+function showProduct(){
+  var pID = document.getElementById("pID").value;
+  return shopfront.products(pID)
+  .then(function(product){
+    console.log(product[0].toString(10));
+    console.log(product[1]);
+    pInfoTable = document.getElementById("pInfoTable");
+    pInfoTable.innerHTML = "<tr><td>"+pID+"</td><td>"+web3.fromWei(product[0].toString(10), "ether")+"</td><td>"+product[1]+"</td></tr>";
+  });
+}
+
+function getProductStock(pID){
+  return shopfront.products(pID)
+  .then(function(product){
+    console.log("stock:"+product[1]);
+    document.getElementById("stockleft"+pID).innerHTML = product[1];
+  });
+}
+
+function buyProduct(pID, price){
+  return shopfront.buy(pID, {from:customer, value:price})
+  .then(web3.eth.getTransactionReceiptMined)
+  .then(function(receipt){
+      event = shopfront.OnProductBought().formatter(receipt.logs[0]);
+      console.log(event.args.buyer.toString());
+      console.log(event.args.productID);
+      console.log(event.args.price.toString(10));
+      setStatus("Purchase is done.<br />Transaction Hash: "+receipt.transactionHash);
+      return shopfront.products(pID);
+  })
+  .then(function(product){
+    console.log("stock:"+product[1]);
+    document.getElementById("stockleft"+pID).innerHTML = product[1];
+  });
+}
+
+function setStatus(message) {
+  var status = document.getElementById("status");
+  status.innerHTML = message;
+};
 
 window.onload = function() {
   web3.eth.getAccounts(function(err, accs) {
@@ -44132,38 +44206,21 @@ window.onload = function() {
       alert("There was an error fetching your accounts.");
       return;
     }
-
     if (accs.length == 0) {
       alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.");
       return;
     }
-
     accounts = accs;
     account = accounts[0];
+    customer = accounts[1];
   });
 
   shopfront = Shopfront.deployed();
-  productCreatedEvent = shopfront.OnProductCreated();
-  /*
-  productCreatedEvent.watch(function(error, result){
-    if(!error){
-      console.log(result);
-    }else{
-      console.log(error);
-    }
-  });
-  */
-  productCreatedEvent.watchPromise = function () {
-      return new Promise(function (resolve, reject) {
-          productCreatedEvent.watch(function(e, result) {
-              if (e != null) {
-                  reject(e);
-              } else {
-                  resolve(result);
-              }
-          });
-      });
-  };
+
+  productCreatedEvent = shopfront.OnProductCreated({fromBlock: 0, toBlock: 'latest'});
+  productBoughtEvent = shopfront.OnProductBought({fromBlock: 0, toBlock: 'latest'});
+
+  showProductList();
 
   web3.eth.getTransactionReceiptMined = function (txnHash, interval) {
       var transactionReceiptAsync;

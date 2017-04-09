@@ -8,12 +8,15 @@ body {
 label {
   display: inline-block;
   width: 100px;
+  margin-top: 15px;
 }
 
 input {
-  width: 500px;
+  width: 100%;
   padding: 5px;
   font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 button {
@@ -22,7 +25,6 @@ button {
 }
 
 h1, h2 {
-  display: inline-block;
   vertical-align: middle;
   margin-top: 0px;
   margin-bottom: 10px;
@@ -45,4 +47,44 @@ h3 {
 
 #balance {
   color: black;
+}
+
+#status {
+  border: 1px solid #ccc;
+  background-color: #eee;
+  padding: 10px;
+  color: black;
+  font-size: 11px;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-color: #ccc;
+  width: 100%;
+  margin-top: 15px;
+}
+
+td {
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  border-color: #ccc;
+  color: #333;
+  background-color: #fff;
+}
+
+th {
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  word-break: normal;
+  border-color: #ccc;
+  color: #333;
+  background-color: #f0f0f0;
+}
+
+table, td, th {
+  vertical-align: top;
 }

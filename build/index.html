@@ -10,17 +10,37 @@
 </head>
 <body>
   <h1>Shopfront</h1>
-
-  <br>
-  <h1>Create a product</h1>
-  <br><label for="price">Price(Wei):</label><input type="text" id="price" placeholder="e.g., 1000" value="1000"></input>
-  <br><label for="stock">Stock:</label><input type="text" id="stock" placeholder="e.g., 22" value="2222"></input>
-  <br><br><button id="newProduct" onclick="newProduct()">Create</button>
+  <p id="status"></p>
+  <h3>Create a product</h3>
+  <div>
+    <label for="price">Price(Ether):</label><input type="text" id="price" placeholder="e.g., 1000" value="5"></input>
+    <label for="stock">Stock:</label><input type="text" id="stock" placeholder="e.g., 22" value="100"></input>
+    <button id="addProduct" onclick="addProduct()">Create</button>
+  </div>
+  <h3>Products List</h3>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Stock Left</th>
+      <th></th>
+    </tr>
+    <tbody id="pTable"></tbody>
+  </table>
   <br><br>
-  <h1>Show product info</h1>
-  <br><label for="pID">ID:</label><input type="text" id="pID" value="0"></input>
-  <br><br><button id="showProduct" onclick="showProduct()">Show</button>
-  <br><br>
-  <span id="status"></span>
+  <h3>Show product info</h3>
+  <div>
+    <label for="pID">ID:</label><input type="text" id="pID" value="0"></input>
+    <button id="showProduct" onclick="showProduct()">Show</button>
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Price</th>
+        <th>Stock Left</th>
+      </tr>
+      <tbody id="pInfoTable"></tbody>
+    </table>
+  </div>
 </body>
 </html>
